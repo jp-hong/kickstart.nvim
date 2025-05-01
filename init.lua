@@ -670,8 +670,8 @@ require('lazy').setup({
       local servers = {
         -- clangd = {},
         -- gopls = {},
-        pyright = {},
-        rust_analyzer = {},
+        -- pyright = {},
+        -- rust_analyzer = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
         -- Some languages (like typescript) have entire language plugins that can be useful:
@@ -730,6 +730,16 @@ require('lazy').setup({
           end,
         },
       }
+
+      -- ruff
+      require('lspconfig').ruff.setup({
+        init_options = {
+          settings = {
+            -- Ruff language server settings go here
+            lineLength = 88
+          }
+        }
+      })
     end,
   },
 
@@ -766,7 +776,7 @@ require('lazy').setup({
       formatters_by_ft = {
         lua = { 'stylua' },
         -- go = { 'gofmt' },
-        python = { 'ruff' }
+        -- python = { 'ruff' },
         -- Conform can also run multiple formatters sequentially
         -- python = { "isort", "black" },
         --
@@ -1007,7 +1017,7 @@ require('lazy').setup({
     ft = {"go", 'gomod'},
     build = ':lua require("go.install").update_all_sync()' -- if you need to install/update all binaries
   },
-
+  
   -- The following comments only work if you have downloaded the kickstart repo, not just copy pasted the
   -- init.lua. If you want these files, they are in the repository, so you can just download them and
   -- place them in the correct locations.
