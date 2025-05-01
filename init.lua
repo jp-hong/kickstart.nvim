@@ -669,7 +669,7 @@ require('lazy').setup({
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
       local servers = {
         -- clangd = {},
-        gopls = {},
+        -- gopls = {},
         pyright = {},
         rust_analyzer = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
@@ -765,7 +765,7 @@ require('lazy').setup({
       end,
       formatters_by_ft = {
         lua = { 'stylua' },
-        go = { 'gopls' },
+        -- go = { 'gofmt' },
         python = { 'ruff' }
         -- Conform can also run multiple formatters sequentially
         -- python = { "isort", "black" },
@@ -875,20 +875,24 @@ require('lazy').setup({
     },
   },
 
+  -- Catppuccin theme
   {
     "catppuccin/nvim",
     name = "catppuccin",
     priority = 1000,
     config = function()
-      require("catppuccin").setup {
+      require("catppuccin").setup(
         {
-          flavor = "mocha",
-        },
-      }
-      vim.cmd.colorscheme 'catppuccin'
-    end
+          flavor = "macchiato",
+          background = { -- :h background
+            light = "latte",
+            dark = "macchiato",
+          },
+        }
+      )
+      vim.cmd.colorscheme "catppuccin"
+    end,
   },
-  
 
   -- { -- You can easily change to a different colorscheme.
   --   -- Change the name of the colorscheme plugin below, and then
@@ -976,6 +980,32 @@ require('lazy').setup({
     --    - Incremental selection: Included, see `:help nvim-treesitter-incremental-selection-mod`
     --    - Show your current context: https://github.com/nvim-treesitter/nvim-treesitter-context
     --    - Treesitter + textobjects: https://github.com/nvim-treesitter/nvim-treesitter-textobjects
+  },
+
+  -- go
+  {
+    "ray-x/go.nvim",
+    dependencies = {  -- optional packages
+      "ray-x/guihua.lua",
+      "neovim/nvim-lspconfig",
+      "nvim-treesitter/nvim-treesitter",
+    },
+    config = function()
+      require("go").setup()
+      -- Run gofmt + goimports on save
+
+      local format_sync_grp = vim.api.nvim_create_augroup("goimports", {})
+        vim.api.nvim_create_autocmd("BufWritePre", {
+        pattern = "*.go",
+        callback = function()
+        require('go.format').goimports()
+        end,
+        group = format_sync_grp,
+      })
+    end,
+    event = {"CmdlineEnter"},
+    ft = {"go", 'gomod'},
+    build = ':lua require("go.install").update_all_sync()' -- if you need to install/update all binaries
   },
 
   -- The following comments only work if you have downloaded the kickstart repo, not just copy pasted the
