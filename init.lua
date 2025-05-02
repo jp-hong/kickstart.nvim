@@ -673,8 +673,10 @@ require('lazy').setup({
       local servers = {
         -- clangd = {},
         -- gopls = {},
-        -- pyright = {},
-        -- rust_analyzer = {},
+        pyright = {},
+        black = {},
+        isort = {},
+        rust_analyzer = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
         -- Some languages (like typescript) have entire language plugins that can be useful:
@@ -683,7 +685,6 @@ require('lazy').setup({
         -- But for many setups, the LSP (`ts_ls`) will work just fine
         -- ts_ls = {},
         --
-
         lua_ls = {
           -- cmd = { ... },
           -- filetypes = { ... },
@@ -733,31 +734,6 @@ require('lazy').setup({
           end,
         },
       }
-
-      -- ruff
-      require('lspconfig').ruff.setup({
-        init_options = {
-          settings = {
-            -- Ruff language server settings go here
-            lineLength = 88
-          }
-        }
-      })
-
-      require('lspconfig').pyright.setup {
-        settings = {
-          pyright = {
-            -- Using Ruff's import organizer
-            disableOrganizeImports = true,
-          },
-          python = {
-            analysis = {
-              -- Ignore all files for analysis to exclusively use Ruff for linting
-              ignore = { '*' },
-            },
-          },
-        },
-      }
     end,
   },
 
@@ -786,7 +762,7 @@ require('lazy').setup({
           return nil
         else
           return {
-            timeout_ms = 500,
+            timeout_ms = 5000,
             lsp_format = 'fallback',
           }
         end
@@ -794,9 +770,8 @@ require('lazy').setup({
       formatters_by_ft = {
         lua = { 'stylua' },
         -- go = { 'gofmt' },
-        -- python = { 'ruff' },
         -- Conform can also run multiple formatters sequentially
-        -- python = { "isort", "black" },
+        python = { 'black', 'isort' },
         --
         -- You can use 'stop_after_first' to run the first available formatter from the list
         -- javascript = { "prettierd", "prettier", stop_after_first = true },
