@@ -1047,6 +1047,79 @@ require('lazy').setup({
   -- Or use telescope!
   -- In normal mode type `<space>sh` then write `lazy.nvim-plugin`
   -- you can continue same window with `<space>sr` which resumes last telescope search
+
+  {
+    "ThePrimeagen/harpoon",
+    branch = "harpoon2",
+    dependencies = { "nvim-lua/plenary.nvim" },
+    config = function()
+      local harpoon = require("harpoon")
+
+      -- REQUIRED
+      harpoon:setup()
+      -- REQUIRED
+
+      -- vim.keymap.set("n", "<leader>a", function() harpoon:list():add() end)
+      vim.keymap.set("n", "<C-e>", function() harpoon.ui:toggle_quick_menu(harpoon:list()) end)
+
+      vim.keymap.set("n", "<leader>a1", function() harpoon:list():replace_at(1) end, { desc = '[A]dd to [1]' })
+      vim.keymap.set("n", "<leader>a2", function() harpoon:list():replace_at(2) end, { desc = '[A]dd to [2]' })
+      vim.keymap.set("n", "<leader>a3", function() harpoon:list():replace_at(3) end, { desc = '[A]dd to [3]' })
+      vim.keymap.set("n", "<leader>a4", function() harpoon:list():replace_at(4) end, { desc = '[A]dd to [4]' })
+      vim.keymap.set("n", "<leader>a5", function() harpoon:list():replace_at(5) end, { desc = '[A]dd to [5]' })
+      vim.keymap.set("n", "<leader>a6", function() harpoon:list():replace_at(6) end, { desc = '[A]dd to [6]' })
+      vim.keymap.set("n", "<leader>a7", function() harpoon:list():replace_at(7) end, { desc = '[A]dd to [7]' })
+      vim.keymap.set("n", "<leader>a8", function() harpoon:list():replace_at(8) end, { desc = '[A]dd to [8]' })
+      vim.keymap.set("n", "<leader>a9", function() harpoon:list():replace_at(9) end, { desc = '[A]dd to [9]' })
+      vim.keymap.set("n", "<leader>a0", function() harpoon:list():replace_at(0) end, { desc = '[A]dd to [0]' })
+
+      vim.keymap.set("n", "<leader>r1", function() harpoon:list():remove_at(1) end, { desc = '[R]emove at [1]' })
+      vim.keymap.set("n", "<leader>r2", function() harpoon:list():remove_at(2) end, { desc = '[R]emove at [2]' })
+      vim.keymap.set("n", "<leader>r3", function() harpoon:list():remove_at(3) end, { desc = '[R]emove at [3]' })
+      vim.keymap.set("n", "<leader>r4", function() harpoon:list():remove_at(4) end, { desc = '[R]emove at [4]' })
+      vim.keymap.set("n", "<leader>r5", function() harpoon:list():remove_at(5) end, { desc = '[R]emove at [5]' })
+      vim.keymap.set("n", "<leader>r6", function() harpoon:list():remove_at(6) end, { desc = '[R]emove at [6]' })
+      vim.keymap.set("n", "<leader>r7", function() harpoon:list():remove_at(7) end, { desc = '[R]emove at [7]' })
+      vim.keymap.set("n", "<leader>r8", function() harpoon:list():remove_at(8) end, { desc = '[R]emove at [8]' })
+      vim.keymap.set("n", "<leader>r9", function() harpoon:list():remove_at(9) end, { desc = '[R]emove at [9]' })
+      vim.keymap.set("n", "<leader>r0", function() harpoon:list():remove_at(0) end, { desc = '[R]emove at [0]' })
+
+      vim.keymap.set("n", "<C-1>", function() harpoon:list():select(1) end)
+      vim.keymap.set("n", "<C-2>", function() harpoon:list():select(2) end)
+      vim.keymap.set("n", "<C-3>", function() harpoon:list():select(3) end)
+      vim.keymap.set("n", "<C-4>", function() harpoon:list():select(4) end)
+      vim.keymap.set("n", "<C-5>", function() harpoon:list():select(5) end)
+      vim.keymap.set("n", "<C-6>", function() harpoon:list():select(6) end)
+      vim.keymap.set("n", "<C-7>", function() harpoon:list():select(7) end)
+      vim.keymap.set("n", "<C-8>", function() harpoon:list():select(8) end)
+      vim.keymap.set("n", "<C-9>", function() harpoon:list():select(9) end)
+      vim.keymap.set("n", "<C-0>", function() harpoon:list():select(0) end)
+
+      -- Toggle previous & next buffers stored within Harpoon list
+      vim.keymap.set("n", "<C-S-P>", function() harpoon:list():prev() end)
+      vim.keymap.set("n", "<C-S-N>", function() harpoon:list():next() end)
+
+      local conf = require("telescope.config").values
+      local function toggle_telescope(harpoon_files)
+          local file_paths = {}
+          for _, item in ipairs(harpoon_files.items) do
+              table.insert(file_paths, item.value)
+          end
+
+          require("telescope.pickers").new({}, {
+              prompt_title = "Harpoon",
+              finder = require("telescope.finders").new_table({
+                  results = file_paths,
+              }),
+              previewer = conf.file_previewer({}),
+              sorter = conf.generic_sorter({}),
+          }):find()
+      end
+
+      vim.keymap.set("n", "<C-e>", function() toggle_telescope(harpoon:list()) end,
+          { desc = "Open harpoon window" })
+    end,
+  },
 }, {
   ui = {
     -- If you are using a Nerd Font: set icons to an empty table which will use the
