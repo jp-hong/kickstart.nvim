@@ -121,11 +121,6 @@ end)
 -- Blinking block cursor
 vim.o.guicursor = 'n-v-c-sm-i-ci-ve:block,r-cr-o:hor20,a:blinkwait700-blinkoff400-blinkon250-Cursor/lCursor'
 
--- Tab width
-vim.opt.tabstop = 4
-vim.opt.softtabstop = 4 -- What you expecting
-vim.opt.shiftwidth = 4 -- What you expecting
-
 -- Enable break indent
 vim.opt.breakindent = true
 
@@ -672,7 +667,7 @@ require('lazy').setup({
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
       local servers = {
         -- clangd = {},
-        -- gopls = {},
+        gopls = {},
         pyright = {},
         black = {},
         isort = {},
@@ -757,7 +752,7 @@ require('lazy').setup({
         -- Disable "format_on_save lsp_fallback" for languages that don't
         -- have a well standardized coding style. You can add additional
         -- languages here or re-enable it for the disabled ones.
-        local disable_filetypes = { c = true, cpp = true }
+        local disable_filetypes = { c = true, cpp = true, go = true }
         if disable_filetypes[vim.bo[bufnr].filetype] then
           return nil
         else
@@ -880,20 +875,18 @@ require('lazy').setup({
 
   -- Catppuccin theme
   {
-    "catppuccin/nvim",
-    name = "catppuccin",
+    'catppuccin/nvim',
+    name = 'catppuccin',
     priority = 1000,
     config = function()
-      require("catppuccin").setup(
-        {
-          flavor = "macchiato",
-          background = { -- :h background
-            light = "latte",
-            dark = "macchiato",
-          },
-        }
-      )
-      vim.cmd.colorscheme "catppuccin"
+      require('catppuccin').setup {
+        flavor = 'macchiato',
+        background = { -- :h background
+          light = 'latte',
+          dark = 'macchiato',
+        },
+      }
+      vim.cmd.colorscheme 'catppuccin'
     end,
   },
 
@@ -962,6 +955,10 @@ require('lazy').setup({
   { -- Highlight, edit, and navigate code
     'nvim-treesitter/nvim-treesitter',
     build = ':TSUpdate',
+    dependencies = {
+      'nvim-treesitter/nvim-treesitter-context',
+      opts = { enable = true, mode = 'topline', line_numbers = true },
+    },
     main = 'nvim-treesitter.configs', -- Sets main module to use for opts
     -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
     opts = {
@@ -987,28 +984,28 @@ require('lazy').setup({
 
   -- go
   {
-    "ray-x/go.nvim",
-    dependencies = {  -- optional packages
-      "ray-x/guihua.lua",
-      "neovim/nvim-lspconfig",
-      "nvim-treesitter/nvim-treesitter",
+    'ray-x/go.nvim',
+    dependencies = { -- optional packages
+      'ray-x/guihua.lua',
+      'neovim/nvim-lspconfig',
+      'nvim-treesitter/nvim-treesitter',
     },
     config = function()
-      require("go").setup()
+      require('go').setup()
       -- Run gofmt + goimports on save
 
-      local format_sync_grp = vim.api.nvim_create_augroup("goimports", {})
-        vim.api.nvim_create_autocmd("BufWritePre", {
-        pattern = "*.go",
+      local format_sync_grp = vim.api.nvim_create_augroup('goimports', {})
+      vim.api.nvim_create_autocmd('BufWritePre', {
+        pattern = '*.go',
         callback = function()
-        require('go.format').goimports()
+          require('go.format').goimports()
         end,
         group = format_sync_grp,
       })
     end,
-    event = {"CmdlineEnter"},
-    ft = {"go", 'gomod'},
-    build = ':lua require("go.install").update_all_sync()' -- if you need to install/update all binaries
+    event = { 'CmdlineEnter' },
+    ft = { 'go', 'gomod' },
+    build = ':lua require("go.install").update_all_sync()', -- if you need to install/update all binaries
   },
 
   -- {
@@ -1020,7 +1017,7 @@ require('lazy').setup({
   --       vim.diagnostic.config({ virtual_text = false }) -- Only if needed in your configuration, if you already have native LSP diagnostics
   --   end
   -- },
-  
+
   -- The following comments only work if you have downloaded the kickstart repo, not just copy pasted the
   -- init.lua. If you want these files, they are in the repository, so you can just download them and
   -- place them in the correct locations.
@@ -1050,145 +1047,149 @@ require('lazy').setup({
 
   -- Harpoon config
   {
-    "ThePrimeagen/harpoon",
-    branch = "harpoon2",
-    dependencies = { "nvim-lua/plenary.nvim" },
+    'ThePrimeagen/harpoon',
+    branch = 'harpoon2',
+    dependencies = { 'nvim-lua/plenary.nvim' },
     config = function()
-      local harpoon = require("harpoon")
+      local harpoon = require 'harpoon'
 
       -- REQUIRED
       harpoon:setup()
       -- REQUIRED
 
       -- vim.keymap.set("n", "<leader>a", function() harpoon:list():add() end)
-      vim.keymap.set("n", "<C-e>", function() harpoon.ui:toggle_quick_menu(harpoon:list()) end)
+      vim.keymap.set('n', '<C-e>', function()
+        harpoon.ui:toggle_quick_menu(harpoon:list())
+      end)
 
-      vim.keymap.set("n", "<leader>a1", function() harpoon:list():replace_at(1) end, { desc = '[A]dd to [1]' })
-      vim.keymap.set("n", "<leader>a2", function() harpoon:list():replace_at(2) end, { desc = '[A]dd to [2]' })
-      vim.keymap.set("n", "<leader>a3", function() harpoon:list():replace_at(3) end, { desc = '[A]dd to [3]' })
-      vim.keymap.set("n", "<leader>a4", function() harpoon:list():replace_at(4) end, { desc = '[A]dd to [4]' })
-      vim.keymap.set("n", "<leader>a5", function() harpoon:list():replace_at(5) end, { desc = '[A]dd to [5]' })
-      vim.keymap.set("n", "<leader>a6", function() harpoon:list():replace_at(6) end, { desc = '[A]dd to [6]' })
-      vim.keymap.set("n", "<leader>a7", function() harpoon:list():replace_at(7) end, { desc = '[A]dd to [7]' })
-      vim.keymap.set("n", "<leader>a8", function() harpoon:list():replace_at(8) end, { desc = '[A]dd to [8]' })
-      vim.keymap.set("n", "<leader>a9", function() harpoon:list():replace_at(9) end, { desc = '[A]dd to [9]' })
-      vim.keymap.set("n", "<leader>a0", function() harpoon:list():replace_at(0) end, { desc = '[A]dd to [0]' })
+      vim.keymap.set('n', '<leader>a1', function()
+        harpoon:list():replace_at(1)
+      end, { desc = '[A]dd to [1]' })
+      vim.keymap.set('n', '<leader>a2', function()
+        harpoon:list():replace_at(2)
+      end, { desc = '[A]dd to [2]' })
+      vim.keymap.set('n', '<leader>a3', function()
+        harpoon:list():replace_at(3)
+      end, { desc = '[A]dd to [3]' })
+      vim.keymap.set('n', '<leader>a4', function()
+        harpoon:list():replace_at(4)
+      end, { desc = '[A]dd to [4]' })
 
-      vim.keymap.set("n", "<leader>r1", function() harpoon:list():remove_at(1) end, { desc = '[R]emove at [1]' })
-      vim.keymap.set("n", "<leader>r2", function() harpoon:list():remove_at(2) end, { desc = '[R]emove at [2]' })
-      vim.keymap.set("n", "<leader>r3", function() harpoon:list():remove_at(3) end, { desc = '[R]emove at [3]' })
-      vim.keymap.set("n", "<leader>r4", function() harpoon:list():remove_at(4) end, { desc = '[R]emove at [4]' })
-      vim.keymap.set("n", "<leader>r5", function() harpoon:list():remove_at(5) end, { desc = '[R]emove at [5]' })
-      vim.keymap.set("n", "<leader>r6", function() harpoon:list():remove_at(6) end, { desc = '[R]emove at [6]' })
-      vim.keymap.set("n", "<leader>r7", function() harpoon:list():remove_at(7) end, { desc = '[R]emove at [7]' })
-      vim.keymap.set("n", "<leader>r8", function() harpoon:list():remove_at(8) end, { desc = '[R]emove at [8]' })
-      vim.keymap.set("n", "<leader>r9", function() harpoon:list():remove_at(9) end, { desc = '[R]emove at [9]' })
-      vim.keymap.set("n", "<leader>r0", function() harpoon:list():remove_at(0) end, { desc = '[R]emove at [0]' })
+      vim.keymap.set('n', '<leader>r1', function()
+        harpoon:list():remove_at(1)
+      end, { desc = '[R]emove at [1]' })
+      vim.keymap.set('n', '<leader>r2', function()
+        harpoon:list():remove_at(2)
+      end, { desc = '[R]emove at [2]' })
+      vim.keymap.set('n', '<leader>r3', function()
+        harpoon:list():remove_at(3)
+      end, { desc = '[R]emove at [3]' })
+      vim.keymap.set('n', '<leader>r4', function()
+        harpoon:list():remove_at(4)
+      end, { desc = '[R]emove at [4]' })
 
-      vim.keymap.set("n", "<C-1>", function() harpoon:list():select(1) end)
-      vim.keymap.set("n", "<C-2>", function() harpoon:list():select(2) end)
-      vim.keymap.set("n", "<C-3>", function() harpoon:list():select(3) end)
-      vim.keymap.set("n", "<C-4>", function() harpoon:list():select(4) end)
-      vim.keymap.set("n", "<C-5>", function() harpoon:list():select(5) end)
-      vim.keymap.set("n", "<C-6>", function() harpoon:list():select(6) end)
-      vim.keymap.set("n", "<C-7>", function() harpoon:list():select(7) end)
-      vim.keymap.set("n", "<C-8>", function() harpoon:list():select(8) end)
-      vim.keymap.set("n", "<C-9>", function() harpoon:list():select(9) end)
-      vim.keymap.set("n", "<C-0>", function() harpoon:list():select(0) end)
+      vim.keymap.set('n', '<leader>1', function()
+        harpoon:list():select(1)
+      end, { desc = 'Go to [1]' })
+      vim.keymap.set('n', '<leader>2', function()
+        harpoon:list():select(2)
+      end, { desc = 'Go to [2]' })
+      vim.keymap.set('n', '<leader>3', function()
+        harpoon:list():select(3)
+      end, { desc = 'Go to [3]' })
+      vim.keymap.set('n', '<leader>4', function()
+        harpoon:list():select(4)
+      end, { desc = 'Go to [4]' })
 
       -- Toggle previous & next buffers stored within Harpoon list
-      vim.keymap.set("n", "<C-S-P>", function() harpoon:list():prev() end)
-      vim.keymap.set("n", "<C-S-N>", function() harpoon:list():next() end)
+      vim.keymap.set('n', '<C-S-P>', function()
+        harpoon:list():prev()
+      end)
+      vim.keymap.set('n', '<C-S-N>', function()
+        harpoon:list():next()
+      end)
 
-      local conf = require("telescope.config").values
+      local conf = require('telescope.config').values
       local function toggle_telescope(harpoon_files)
-          local file_paths = {}
-          for _, item in ipairs(harpoon_files.items) do
-              table.insert(file_paths, item.value)
-          end
+        local file_paths = {}
+        for _, item in ipairs(harpoon_files.items) do
+          table.insert(file_paths, item.value)
+        end
 
-          require("telescope.pickers").new({}, {
-              prompt_title = "Harpoon",
-              finder = require("telescope.finders").new_table({
-                  results = file_paths,
-              }),
-              previewer = conf.file_previewer({}),
-              sorter = conf.generic_sorter({}),
-          }):find()
+        require('telescope.pickers')
+          .new({}, {
+            prompt_title = 'Harpoon',
+            finder = require('telescope.finders').new_table {
+              results = file_paths,
+            },
+            previewer = conf.file_previewer {},
+            sorter = conf.generic_sorter {},
+          })
+          :find()
       end
 
-      vim.keymap.set("n", "<C-e>", function() toggle_telescope(harpoon:list()) end,
-          { desc = "Open harpoon window" })
+      vim.keymap.set('n', '<C-e>', function()
+        toggle_telescope(harpoon:list())
+      end, { desc = 'Open harpoon window' })
     end,
   },
 
-  -- Render markdown
-  -- {
-  --   'MeanderingProgrammer/render-markdown.nvim',
-  --   dependencies = { 'nvim-treesitter/nvim-treesitter', 'echasnovski/mini.nvim' }, -- if you use the mini.nvim suite
-  --   -- dependencies = { 'nvim-treesitter/nvim-treesitter', 'echasnovski/mini.icons' }, -- if you use standalone mini plugins
-  --   -- dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-tree/nvim-web-devicons' }, -- if you prefer nvim-web-devicons
-  --   ---@module 'render-markdown'
-  --   ---@type render.md.UserConfig
-  --   opts = {},
-  -- },
-
   -- Inline git blame
   {
-    "f-person/git-blame.nvim",
+    'f-person/git-blame.nvim',
     -- load the plugin at startup
-    event = "VeryLazy",
+    event = 'VeryLazy',
     -- Because of the keys part, you will be lazy loading this plugin.
     -- The plugin will only load once one of the keys is used.
     -- If you want to load the plugin at startup, add something like event = "VeryLazy",
     -- or lazy = false. One of both options will work.
     opts = {
-        -- your configuration comes here
-        -- for example
-        enabled = true,  -- if you want to enable the plugin
-        date_format = '%r',
-        delay = 0,
-        message_template = '    <author> • <date>',
-        message_when_not_committed = '    Not Committed Yet'
-        -- virtual_text_column = 88
+      -- your configuration comes here
+      -- for example
+      enabled = true, -- if you want to enable the plugin
+      date_format = '%r',
+      delay = 0,
+      message_template = '    <author> • <date>',
+      message_when_not_committed = '    Not Committed Yet',
+      -- virtual_text_column = 88
     },
   },
 
   ---@module "neominimap.config.meta"
   {
-    "Isrothy/neominimap.nvim",
-    version = "v3.x.x",
+    'Isrothy/neominimap.nvim',
+    version = 'v3.x.x',
     lazy = false, -- NOTE: NO NEED to Lazy load
     -- Optional. You can alse set your own keybindings
     keys = {
       -- Global Minimap Controls
-      { "<leader>nm", "<cmd>Neominimap Toggle<cr>", desc = "Toggle global minimap" },
-      { "<leader>no", "<cmd>Neominimap Enable<cr>", desc = "Enable global minimap" },
-      { "<leader>nc", "<cmd>Neominimap Disable<cr>", desc = "Disable global minimap" },
-      { "<leader>nr", "<cmd>Neominimap Refresh<cr>", desc = "Refresh global minimap" },
+      { '<leader>nm', '<cmd>Neominimap Toggle<cr>', desc = 'Toggle global minimap' },
+      { '<leader>no', '<cmd>Neominimap Enable<cr>', desc = 'Enable global minimap' },
+      { '<leader>nc', '<cmd>Neominimap Disable<cr>', desc = 'Disable global minimap' },
+      { '<leader>nr', '<cmd>Neominimap Refresh<cr>', desc = 'Refresh global minimap' },
 
       -- Window-Specific Minimap Controls
-      { "<leader>nwt", "<cmd>Neominimap WinToggle<cr>", desc = "Toggle minimap for current window" },
-      { "<leader>nwr", "<cmd>Neominimap WinRefresh<cr>", desc = "Refresh minimap for current window" },
-      { "<leader>nwo", "<cmd>Neominimap WinEnable<cr>", desc = "Enable minimap for current window" },
-      { "<leader>nwc", "<cmd>Neominimap WinDisable<cr>", desc = "Disable minimap for current window" },
+      { '<leader>nwt', '<cmd>Neominimap WinToggle<cr>', desc = 'Toggle minimap for current window' },
+      { '<leader>nwr', '<cmd>Neominimap WinRefresh<cr>', desc = 'Refresh minimap for current window' },
+      { '<leader>nwo', '<cmd>Neominimap WinEnable<cr>', desc = 'Enable minimap for current window' },
+      { '<leader>nwc', '<cmd>Neominimap WinDisable<cr>', desc = 'Disable minimap for current window' },
 
       -- Tab-Specific Minimap Controls
-      { "<leader>ntt", "<cmd>Neominimap TabToggle<cr>", desc = "Toggle minimap for current tab" },
-      { "<leader>ntr", "<cmd>Neominimap TabRefresh<cr>", desc = "Refresh minimap for current tab" },
-      { "<leader>nto", "<cmd>Neominimap TabEnable<cr>", desc = "Enable minimap for current tab" },
-      { "<leader>ntc", "<cmd>Neominimap TabDisable<cr>", desc = "Disable minimap for current tab" },
+      { '<leader>ntt', '<cmd>Neominimap TabToggle<cr>', desc = 'Toggle minimap for current tab' },
+      { '<leader>ntr', '<cmd>Neominimap TabRefresh<cr>', desc = 'Refresh minimap for current tab' },
+      { '<leader>nto', '<cmd>Neominimap TabEnable<cr>', desc = 'Enable minimap for current tab' },
+      { '<leader>ntc', '<cmd>Neominimap TabDisable<cr>', desc = 'Disable minimap for current tab' },
 
       -- Buffer-Specific Minimap Controls
-      { "<leader>nbt", "<cmd>Neominimap BufToggle<cr>", desc = "Toggle minimap for current buffer" },
-      { "<leader>nbr", "<cmd>Neominimap BufRefresh<cr>", desc = "Refresh minimap for current buffer" },
-      { "<leader>nbo", "<cmd>Neominimap BufEnable<cr>", desc = "Enable minimap for current buffer" },
-      { "<leader>nbc", "<cmd>Neominimap BufDisable<cr>", desc = "Disable minimap for current buffer" },
+      { '<leader>nbt', '<cmd>Neominimap BufToggle<cr>', desc = 'Toggle minimap for current buffer' },
+      { '<leader>nbr', '<cmd>Neominimap BufRefresh<cr>', desc = 'Refresh minimap for current buffer' },
+      { '<leader>nbo', '<cmd>Neominimap BufEnable<cr>', desc = 'Enable minimap for current buffer' },
+      { '<leader>nbc', '<cmd>Neominimap BufDisable<cr>', desc = 'Disable minimap for current buffer' },
 
       ---Focus Controls
-      { "<leader>nf", "<cmd>Neominimap Focus<cr>", desc = "Focus on minimap" },
-      { "<leader>nu", "<cmd>Neominimap Unfocus<cr>", desc = "Unfocus minimap" },
-      { "<leader>ns", "<cmd>Neominimap ToggleFocus<cr>", desc = "Switch focus on minimap" },
+      { '<leader>nf', '<cmd>Neominimap Focus<cr>', desc = 'Focus on minimap' },
+      { '<leader>nu', '<cmd>Neominimap Unfocus<cr>', desc = 'Unfocus minimap' },
+      { '<leader>ns', '<cmd>Neominimap ToggleFocus<cr>', desc = 'Switch focus on minimap' },
     },
     init = function()
       -- The following options are recommended when layout == "float"
@@ -1201,7 +1202,26 @@ require('lazy').setup({
         auto_enable = true,
       }
     end,
-  }
+  },
+
+  {
+    'christoomey/vim-tmux-navigator',
+    cmd = {
+      'TmuxNavigateLeft',
+      'TmuxNavigateDown',
+      'TmuxNavigateUp',
+      'TmuxNavigateRight',
+      'TmuxNavigatePrevious',
+      'TmuxNavigatorProcessList',
+    },
+    keys = {
+      { '<c-h>', '<cmd><C-U>TmuxNavigateLeft<cr>' },
+      { '<c-j>', '<cmd><C-U>TmuxNavigateDown<cr>' },
+      { '<c-k>', '<cmd><C-U>TmuxNavigateUp<cr>' },
+      { '<c-l>', '<cmd><C-U>TmuxNavigateRight<cr>' },
+      { '<c-\\>', '<cmd><C-U>TmuxNavigatePrevious<cr>' },
+    },
+  },
 }, {
   ui = {
     -- If you are using a Nerd Font: set icons to an empty table which will use the
